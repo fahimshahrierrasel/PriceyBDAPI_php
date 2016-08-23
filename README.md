@@ -8,10 +8,11 @@ place all this file to your htdocs to test this API.
 
 ### API Requests
  
- | # | Requests | Method |
- |---|----------|--------|
- |1|`http://localhost/`|get|
- |2|`http://localhost/hello/your name`|get|
+| # | Requests | Method |
+| :---: | :----------: | :--------: |
+| 1 | `http://localhost/` | get |
+| 2 | `http://localhost/hello/your name` | get |
+
  
  
  
