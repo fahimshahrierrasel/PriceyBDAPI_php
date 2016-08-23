@@ -166,6 +166,13 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
             'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
         ));
     }
+    else
+    {
+        echo json_encode(array(
+            'status' => false,
+            'message' => "MOBILE_ID $mobile_id does not exist!"
+        ));
+    }
 });
 
 
