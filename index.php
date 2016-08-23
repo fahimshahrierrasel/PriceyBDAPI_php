@@ -7,10 +7,29 @@
  */
 require 'vendor/autoload.php';
 require 'plugins/NotORM.php';
+ini_set('memory_limit', '-1');
+set_time_limit(0);
 
 \Slim\Slim::registerAutoloader();
 
 $application = new \Slim\Slim();
+
+
+$DB_HOST = 'localhost:8889';
+$DB_USER = 'root';
+$DB_PASSWORD = 'root';
+$DB_NAME = 'PRICEYBD';
+$DB_method = 'mysql:dbname=';
+
+// Database reference add.
+$databaseReference = $DB_method.$DB_NAME;
+
+// Database driver intialize for connecting the database.
+$databaseDiverInitialize = new PDO($databaseReference, $DB_USER, $DB_PASSWORD);
+
+// Database Object for doing database operations.
+$databaseObject = new NotORM($databaseDiverInitialize);
+
 
 $application->get('/', function () {
 
@@ -56,5 +75,98 @@ $application->get('/hello/:name', function ($name) {
             </html>
             ");
 });
+
+
+$application->get('/alldevices', function() use ($application, $databaseObject){
+    $mobiles = array();
+
+    foreach ($databaseObject->MOBILE_FEATURES() as $mobile)
+    {
+        $mobiles[] = array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'NETWORK' => utf8_encode($mobile['NETWORK']),
+            'LAUNCH' => utf8_encode($mobile['LAUNCH']),
+            'DISPLAY_SIZE' => utf8_encode($mobile['DISPLAY_SIZE']),
+            'DISPLAY_RESOLUTION' => utf8_encode($mobile['DISPLAY_RESOLUTION']),
+            'DISPLAY_TYPE' => utf8_encode($mobile['DISPLAY_TYPE']),
+            'SIM_TYPE' => utf8_encode($mobile['SIM_TYPE']),
+            'WEIGHT' => utf8_encode($mobile['WEIGHT']),
+            'OS' => utf8_encode($mobile['OS']),
+            'CHIPSET' => utf8_encode($mobile['CHIPSET']),
+            'CPU' => utf8_encode($mobile['CPU']),
+            'GPU' => utf8_encode($mobile['GPU']),
+            'MEMORY_RAM' => utf8_encode($mobile['MEMORY_RAM']),
+            'MEMORY_INTERNAL' => utf8_encode($mobile['MEMORY_INTERNAL']),
+            'MEMORY_EXTERNAL' => utf8_encode($mobile['MEMORY_EXTERNAL']),
+            'PRIMARY_CAMERA' => utf8_encode($mobile['PRIMARY_CAMERA']),
+            'SECONDARY_CAMERA' => utf8_encode($mobile['SECONDARY_CAMERA']),
+            'CAMERA_FEATURES' => utf8_encode($mobile['CAMERA_FEATURES']),
+            'BATTERY_TYPE' => utf8_encode($mobile['BATTERY_TYPE']),
+            'BLUETOOTH' => utf8_encode($mobile['BLUETOOTH']),
+            'WIFI' => utf8_encode($mobile['WIFI']),
+            'NFC' => utf8_encode($mobile['NFC']),
+            'OTG' => utf8_encode($mobile['OTG']),
+            'RADIO' => utf8_encode($mobile['RADIO']),
+            'GPS' => utf8_encode($mobile['GPS']),
+            'USB' => utf8_encode($mobile['USB']),
+            'SENSORS' => utf8_encode($mobile['SENSORS']),
+            'COLORS' => utf8_encode($mobile['COLORS']),
+            'DIMENSIONS' => utf8_encode($mobile['DIMENSIONS']),
+            'PHOTO'=> utf8_encode($mobile['PHOTO']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        );
+    }
+    $application->response()->header('Content-Type', 'application/json');
+    echo json_encode($mobiles);
+});
+
+$application->get('/device/:mobile_id', function($mobile_id) use ($application, $databaseObject){
+
+    $application->response()->header('Content-Type', 'application/json');
+    $tempMobile = $databaseObject->MOBILE_FEATURES()->where("MOBILE_ID", $mobile_id);
+    if ($mobile = $tempMobile->fetch())
+    {
+        echo json_encode(array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'NETWORK' => utf8_encode($mobile['NETWORK']),
+            'LAUNCH' => utf8_encode($mobile['LAUNCH']),
+            'DISPLAY_SIZE' => utf8_encode($mobile['DISPLAY_SIZE']),
+            'DISPLAY_RESOLUTION' => utf8_encode($mobile['DISPLAY_RESOLUTION']),
+            'DISPLAY_TYPE' => utf8_encode($mobile['DISPLAY_TYPE']),
+            'SIM_TYPE' => utf8_encode($mobile['SIM_TYPE']),
+            'WEIGHT' => utf8_encode($mobile['WEIGHT']),
+            'OS' => utf8_encode($mobile['OS']),
+            'CHIPSET' => utf8_encode($mobile['CHIPSET']),
+            'CPU' => utf8_encode($mobile['CPU']),
+            'GPU' => utf8_encode($mobile['GPU']),
+            'MEMORY_RAM' => utf8_encode($mobile['MEMORY_RAM']),
+            'MEMORY_INTERNAL' => utf8_encode($mobile['MEMORY_INTERNAL']),
+            'MEMORY_EXTERNAL' => utf8_encode($mobile['MEMORY_EXTERNAL']),
+            'PRIMARY_CAMERA' => utf8_encode($mobile['PRIMARY_CAMERA']),
+            'SECONDARY_CAMERA' => utf8_encode($mobile['SECONDARY_CAMERA']),
+            'CAMERA_FEATURES' => utf8_encode($mobile['CAMERA_FEATURES']),
+            'BATTERY_TYPE' => utf8_encode($mobile['BATTERY_TYPE']),
+            'BLUETOOTH' => utf8_encode($mobile['BLUETOOTH']),
+            'WIFI' => utf8_encode($mobile['WIFI']),
+            'NFC' => utf8_encode($mobile['NFC']),
+            'OTG' => utf8_encode($mobile['OTG']),
+            'RADIO' => utf8_encode($mobile['RADIO']),
+            'GPS' => utf8_encode($mobile['GPS']),
+            'USB' => utf8_encode($mobile['USB']),
+            'SENSORS' => utf8_encode($mobile['SENSORS']),
+            'COLORS' => utf8_encode($mobile['COLORS']),
+            'DIMENSIONS' => utf8_encode($mobile['DIMENSIONS']),
+            'PHOTO'=> utf8_encode($mobile['PHOTO']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        ));
+    }
+});
+
 
 $application->run();
