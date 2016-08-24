@@ -77,7 +77,7 @@ $application->get('/hello/:name', function ($name) {
 });
 
 
-$application->get('/alldevices', function() use ($application, $databaseObject){
+$application->get('/devices', function() use ($application, $databaseObject){
     $mobiles = array();
 
     foreach ($databaseObject->MOBILE_FEATURES() as $mobile)
@@ -173,6 +173,46 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
             'message' => "MOBILE_ID $mobile_id does not exist!"
         ));
     }
+});
+
+
+$application->get('/devicesshortinfo', function() use ($application, $databaseObject){
+
+    $mobiles = array();
+    $application->response()->header('Content-Type', 'application/json');
+
+    foreach ($databaseObject->MOBILE_FEATURES() as $mobile)
+    {
+        $mobiles[] = array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        );
+    }
+    echo json_encode($mobiles);
+
+});
+
+$application->get('/sortdevices', function() use ($application, $databaseObject){
+
+    $mobiles = array();
+    $application->response()->header('Content-Type', 'application/json');
+    $sortKey = $application->request->params('sort_key');
+    $sortValue = $application->request->params('sort_value');
+    $sortedMobiles = $databaseObject->MOBILE_FEATURES()->where($sortKey, $sortValue);
+    foreach ($sortedMobiles as $mobile)
+    {
+        $mobiles[] = array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        );
+    }
+    echo json_encode($mobiles);
 });
 
 
