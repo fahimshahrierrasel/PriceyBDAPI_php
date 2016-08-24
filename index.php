@@ -125,7 +125,7 @@ $application->get('/devices', function() use ($application, $databaseObject){
         );
     }
     $application->response()->header('Content-Type', 'application/json');
-    echo json_encode($mobiles);
+    echo json_encode($mobiles, JSON_FORCE_OBJECT);
 });
 
 // Single device details information
@@ -171,7 +171,7 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
             'DIMENSIONS' => utf8_encode($mobile['DIMENSIONS']),
             'PHOTO'=> utf8_encode($mobile['PHOTO']),
             'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
-        ));
+        ), JSON_FORCE_OBJECT);
     }
     else
     {
@@ -199,7 +199,7 @@ $application->get('/devicesshortinfo', function() use ($application, $databaseOb
             'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
         );
     }
-    echo json_encode($mobiles);
+    echo json_encode($mobiles, JSON_FORCE_OBJECT);
 
 });
 
@@ -222,7 +222,7 @@ $application->get('/sortdevices', function() use ($application, $databaseObject)
             'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
         );
     }
-    echo json_encode($mobiles);
+    echo json_encode($mobiles, JSON_FORCE_OBJECT);
 });
 
 // Get the price of the device
@@ -243,10 +243,10 @@ $application->get('/deviceprice/:mobile_id', function($mobile_id) use ($applicat
             'PRICE' => utf8_encode($price['PRICE'])
         );
     }
-    echo json_encode($prices);
+    echo json_encode($prices, JSON_FORCE_OBJECT);
 });
 
-// Get all the shop information
+// Get all shops information
 // (get) http://localhost/allshops
 $application->get('/allshops', function() use ($application, $databaseObject){
 
@@ -265,7 +265,7 @@ $application->get('/allshops', function() use ($application, $databaseObject){
             'LONGITUDE' => utf8_encode($shop['LONGITUDE'])
         );
     }
-    echo json_encode($shops);
+    echo json_encode($shops, JSON_FORCE_OBJECT);
 
 });
 
@@ -288,7 +288,7 @@ $application->get('/shop/:shop_id', function($shop_id) use ($application, $datab
             'SHOP_MOBILE_NUMBER' => utf8_encode($shop['SHOP_MOBILE_NUMBER']),
             'LATITUDE' => utf8_encode($shop['LATITUDE']),
             'LONGITUDE' => utf8_encode($shop['LONGITUDE'])
-        ));
+        ), JSON_FORCE_OBJECT);
     }
     else
     {
