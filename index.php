@@ -14,7 +14,7 @@ set_time_limit(0);
 
 $application = new \Slim\Slim();
 
-
+// Database Information
 $DB_HOST = 'localhost:8889';
 $DB_USER = 'root';
 $DB_PASSWORD = 'root';
@@ -30,7 +30,8 @@ $databaseDiverInitialize = new PDO($databaseReference, $DB_USER, $DB_PASSWORD);
 // Database Object for doing database operations.
 $databaseObject = new NotORM($databaseDiverInitialize);
 
-
+// Start Page of the API
+// (get) http://localhost/
 $application->get('/', function () {
 
     print ("<!DOCTYPE html>
@@ -54,6 +55,9 @@ $application->get('/', function () {
             ");
 
 });
+
+// Simple hello to you
+// (get) http://localhost/Fahim Shahrier Rasel
 $application->get('/hello/:name', function ($name) {
     print ("<!DOCTYPE html>
             <html>
@@ -76,8 +80,9 @@ $application->get('/hello/:name', function ($name) {
             ");
 });
 
-
-$application->get('/alldevices', function() use ($application, $databaseObject){
+// All devices info with their full information
+// (get) http://localhost/devices
+$application->get('/devices', function() use ($application, $databaseObject){
     $mobiles = array();
 
     foreach ($databaseObject->MOBILE_FEATURES() as $mobile)
@@ -123,6 +128,8 @@ $application->get('/alldevices', function() use ($application, $databaseObject){
     echo json_encode($mobiles);
 });
 
+// Single device details information
+// (get) http://localhost/device/1            1 is the mobile_id
 $application->get('/device/:mobile_id', function($mobile_id) use ($application, $databaseObject){
 
     $application->response()->header('Content-Type', 'application/json');
@@ -175,5 +182,122 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
     }
 });
 
+// All devices short information
+// (get) http://localhost/devicesshortinfo
+$application->get('/devicesshortinfo', function() use ($application, $databaseObject){
+
+    $mobiles = array();
+    $application->response()->header('Content-Type', 'application/json');
+
+    foreach ($databaseObject->MOBILE_FEATURES() as $mobile)
+    {
+        $mobiles[] = array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        );
+    }
+    echo json_encode($mobiles);
+
+});
+
+// Get the sorted short information of the devices
+// (get) http://localhost/sortdevices?sort_key=BRAND&sort_value=Samsung
+$application->get('/sortdevices', function() use ($application, $databaseObject){
+
+    $mobiles = array();
+    $application->response()->header('Content-Type', 'application/json');
+    $sortKey = $application->request->params('sort_key');
+    $sortValue = $application->request->params('sort_value');
+    $sortedMobiles = $databaseObject->MOBILE_FEATURES()->where($sortKey, $sortValue);
+    foreach ($sortedMobiles as $mobile)
+    {
+        $mobiles[] = array(
+
+            'MOBILE_ID' => utf8_encode($mobile['MOBILE_ID']),
+            'BRAND' => utf8_encode($mobile['BRAND']),
+            'MODEL_NAME' => utf8_encode($mobile['MODEL_NAME']),
+            'THUMBNAIL' => utf8_encode($mobile['THUMBNAIL'])
+        );
+    }
+    echo json_encode($mobiles);
+});
+
+// Get the price of the device
+// (get) http://localhost/deviceprice/1            1 is the mobile_id
+$application->get('/deviceprice/:mobile_id', function($mobile_id) use ($application, $databaseObject){
+
+    $prices = array();
+    $application->response()->header('Content-Type', 'application/json');
+
+    $mobilePrices = $databaseObject->PRICE()->where('MOBILE_ID', $mobile_id);
+    foreach ($mobilePrices as $price)
+    {
+        $prices[] = array(
+
+            'PRICE_ID' => utf8_encode($price['PRICE_ID']),
+            'MOBILE_ID' => utf8_encode($price['MOBILE_ID']),
+            'SHOP_ID' => utf8_encode($price['SHOP_ID']),
+            'PRICE' => utf8_encode($price['PRICE'])
+        );
+    }
+    echo json_encode($prices);
+});
+
+// Get all the shop information
+// (get) http://localhost/allshops
+$application->get('/allshops', function() use ($application, $databaseObject){
+
+    $shops = array();
+    $application->response()->header('Content-Type', 'application/json');
+
+    foreach ($databaseObject->SHOP() as $shop)
+    {
+        $shops[] = array(
+            'SHOP_ID' => utf8_encode($shop['SHOP_ID']),
+            'SHOP_NAME' => utf8_encode($shop['SHOP_NAME']),
+            'SHOP_ADDRESS' => utf8_encode($shop['SHOP_ADDRESS']),
+            'SHOP_EMAIL' => utf8_encode($shop['SHOP_EMAIL']),
+            'SHOP_MOBILE_NUMBER' => utf8_encode($shop['SHOP_MOBILE_NUMBER']),
+            'LATITUDE' => utf8_encode($shop['LATITUDE']),
+            'LONGITUDE' => utf8_encode($shop['LONGITUDE'])
+        );
+    }
+    echo json_encode($shops);
+
+});
+
+
+// Get specific the shop information
+// (get) http://localhost/shop/1            1 is the shop_id
+$application->get('/shop/:shop_id', function($shop_id) use ($application, $databaseObject){
+
+    $application->response()->header('Content-Type', 'application/json');
+
+    $tempShop = $databaseObject->SHOP()->where('SHOP_ID', $shop_id);
+    if ($shop = $tempShop->fetch())
+    {
+        echo json_encode(array(
+
+            'SHOP_ID' => utf8_encode($shop['SHOP_ID']),
+            'SHOP_NAME' => utf8_encode($shop['SHOP_NAME']),
+            'SHOP_ADDRESS' => utf8_encode($shop['SHOP_ADDRESS']),
+            'SHOP_EMAIL' => utf8_encode($shop['SHOP_EMAIL']),
+            'SHOP_MOBILE_NUMBER' => utf8_encode($shop['SHOP_MOBILE_NUMBER']),
+            'LATITUDE' => utf8_encode($shop['LATITUDE']),
+            'LONGITUDE' => utf8_encode($shop['LONGITUDE'])
+        ));
+    }
+    else
+    {
+        echo json_encode(array(
+            'status' => false,
+            'message' => "SHOP_ID $shop_id does not exist!"
+        ));
+    }
+
+});
 
 $application->run();
