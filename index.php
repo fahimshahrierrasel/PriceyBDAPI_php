@@ -229,21 +229,20 @@ $application->get('/sortdevices', function() use ($application, $databaseObject)
 // (get) http://localhost/deviceprice/1            1 is the mobile_id
 $application->get('/deviceprice/:mobile_id', function($mobile_id) use ($application, $databaseObject){
 
-    $prices = array();
+    //$prices = array();
     $application->response()->header('Content-Type', 'application/json');
 
     $mobilePrices = $databaseObject->PRICE()->where('MOBILE_ID', $mobile_id);
     foreach ($mobilePrices as $price)
     {
         $prices[] = array(
-
             'PRICE_ID' => utf8_encode($price['PRICE_ID']),
             'MOBILE_ID' => utf8_encode($price['MOBILE_ID']),
             'SHOP_ID' => utf8_encode($price['SHOP_ID']),
             'PRICE' => utf8_encode($price['PRICE'])
         );
     }
-    echo json_encode($prices, JSON_FORCE_OBJECT);
+    echo json_encode(array('prices' => $prices));
 });
 
 // Get all shops information
