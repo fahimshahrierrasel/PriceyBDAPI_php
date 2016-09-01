@@ -299,4 +299,23 @@ $application->get('/shop/:shop_id', function($shop_id) use ($application, $datab
 
 });
 
+// Get all Brands information
+// (get) http://localhost/brands
+$application->get('/brands', function () use($application, $databaseObject) {
+
+    $application->response()->header('Content-Type', 'application/json');
+
+    foreach ($databaseObject->BRAND() as $brand)
+    {
+        $brands[] = array(
+            'BRAND_ID' => utf8_encode($brand['BRAND_ID']),
+            'BRAND_NAME' => utf8_encode($brand['BRAND_NAME']),
+            'BRAND_IMG' => utf8_encode($brand['BRAND_IMG'])
+        );
+    }
+    echo json_encode(array('brands' => $brands));
+
+});
+
+
 $application->run();
