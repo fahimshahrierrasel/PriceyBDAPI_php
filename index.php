@@ -15,10 +15,10 @@ set_time_limit(0);
 $application = new \Slim\Slim();
 
 // Database Information
-$DB_HOsT = 'localhOst:8889';
+$DB_HOsT = 'localhost:8889';
 $DB_USER = 'root';
 $DB_PASSWORD = 'root';
-$DB_NAME = 'PriceYBD';
+$DB_NAME = 'PRICEYBD';
 $DB_method = 'mysql:dbname=';
 
 // Database reference add.
