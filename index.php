@@ -88,9 +88,6 @@ $application->get('/devices', function() use ($application, $databaseObject){
     foreach ($databaseObject->MobileFeatures() as $mobile)
     {
         $mobiles[] = array(
-
-            'MobileID' => utf8_encode($mobile['MobileID']),
-            'Brand' => utf8_encode($mobile['Brand']),
             'ModelName' => utf8_encode($mobile['ModelName']),
             'NetTechnology' => utf8_encode($mobile['NetTechnology']),
             '2GBands' => utf8_encode($mobile['2GBands']),
@@ -141,8 +138,7 @@ $application->get('/devices', function() use ($application, $databaseObject){
             'BatteryTalktime' => utf8_encode($mobile['BatteryTalktime']),
             'BatteryMusicplay' => utf8_encode($mobile['BatteryMusicplay']),
             'Colors' => utf8_encode($mobile['Colors']),
-            'Performance' => utf8_encode($mobile['Performance']),
-            'Photo'=> utf8_encode($mobile['Photo'])
+            'Performance' => utf8_encode($mobile['Performance'])
         );
     }
     $application->response()->header('Content-Type', 'application/json');
@@ -158,9 +154,6 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
     if ($mobile = $tempMobile->fetch())
     {
         echo json_encode(array(
-
-            'MobileID' => utf8_encode($mobile['MobileID']),
-            'Brand' => utf8_encode($mobile['Brand']),
             'ModelName' => utf8_encode($mobile['ModelName']),
             'NetTechnology' => utf8_encode($mobile['NetTechnology']),
             '2GBands' => utf8_encode($mobile['2GBands']),
@@ -211,9 +204,7 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
             'BatteryTalktime' => utf8_encode($mobile['BatteryTalktime']),
             'BatteryMusicplay' => utf8_encode($mobile['BatteryMusicplay']),
             'Colors' => utf8_encode($mobile['Colors']),
-            'Performance' => utf8_encode($mobile['Performance']),
-            'Photo'=> utf8_encode($mobile['Photo'])
-
+            'Performance' => utf8_encode($mobile['Performance'])
         ), JSON_FORCE_OBJECT);
     }
     else
@@ -237,7 +228,6 @@ $application->get('/devicesshortinfo', function() use ($application, $databaseOb
         $mobiles[] = array(
 
             'MobileID' => utf8_encode($mobile['MobileID']),
-            'Brand' => utf8_encode($mobile['Brand']),
             'ModelName' => utf8_encode($mobile['ModelName']),
             'Photo' => utf8_encode($mobile['Photo'])
         );
@@ -247,8 +237,8 @@ $application->get('/devicesshortinfo', function() use ($application, $databaseOb
 });
 
 // Get the sorted short information of the devices
-// (get) http://localhost/sortdevices/Brand/Samsung
-$application->get('/sortdevices/:sortKey/:sortValue', function($sortKey, $sortValue) use ($application, $databaseObject){
+// (get) http://localhost/directsortdevices/Brand/Samsung
+$application->get('/directsortdevices/:sortKey/:sortValue', function($sortKey, $sortValue) use ($application, $databaseObject){
 
     $mobiles = array();
     $application->response()->header('Content-Type', 'application/json');
@@ -257,7 +247,6 @@ $application->get('/sortdevices/:sortKey/:sortValue', function($sortKey, $sortVa
     {
         $mobiles[] = array(
             'MobileID' => utf8_encode($mobile['MobileID']),
-            'Brand' => utf8_encode($mobile['Brand']),
             'ModelName' => utf8_encode($mobile['ModelName']),
             'Photo' => utf8_encode($mobile['Photo'])
         );
@@ -265,25 +254,55 @@ $application->get('/sortdevices/:sortKey/:sortValue', function($sortKey, $sortVa
     echo json_encode(array('devices'=>$mobiles));
 });
 
-// Get the Price of the device
-// (get) http://localhost/devicePrice/1            1 is the mobile_id
-$application->get('/deviceprice/:mobile_id', function($mobile_id) use ($application, $databaseObject){
+// Get the sorted short information of the devices
+// (get) http://localhost/sortdevices/MemoryRam/1.5
+$application->get('/sortdevices/:sortKey/:sortValue', function($sortKey, $sortValue) use ($application, $databaseObject){
 
-    $prices = array();
+    $mobiles = array();
     $application->response()->header('Content-Type', 'application/json');
 
-    $mobilePrices = $databaseObject->PriceTable()->where('MobileID', $mobile_id);
-    foreach ($mobilePrices as $price)
+    $sortedMobiles = null;
+
+    if($sortKey == "MemoryRam")
     {
-        $prices[] = array(
-            'PriceID' => utf8_encode($price['PriceID']),
-            'MobileID' => utf8_encode($price['MobileID']),
-            'ShopID' => utf8_encode($price['ShopID']),
-            'Price' => utf8_encode($price['Price'])
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("MemoryRam >= ?",  $sortValue);
+    }
+    elseif($sortKey == "MemoryInternal")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("MemoryInternal >= ?",  $sortValue);
+    }
+    elseif ($sortKey == "Cpu")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("Cpu >= ?",  $sortValue);
+    }
+    elseif ($sortKey == "BatteryCapacity")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("BatteryCapacity >= ?",  $sortValue);
+    }
+    elseif ($sortKey == "PrimaryCamera")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("PrimaryCamera >= ?", $sortValue);
+    }
+    elseif ($sortKey == "SecondaryCamera")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("SecondaryCamera >= ?", $sortValue);
+    }
+    elseif ($sortKey == "DisplaySize")
+    {
+        $sortedMobiles = $databaseObject->MobileFeatures()->where("DisplaySize >= ?", $sortValue);
+    }
+
+    foreach ($sortedMobiles as $mobile)
+    {
+        $mobiles[] = array(
+            'MobileID' => utf8_encode($mobile['MobileID']),
+            'ModelName' => utf8_encode($mobile['ModelName']),
+            'Photo' => utf8_encode($mobile['Photo'])
         );
     }
-    echo json_encode(array('prices' => $prices));
+    echo json_encode(array('devices'=>$mobiles));
 });
+
 
 // Get all shops information
 // (get) http://localhost/allshops
@@ -319,8 +338,6 @@ $application->get('/shop/:shop_id', function($shopId) use ($application, $databa
     if ($shop = $tempShop->fetch())
     {
         echo json_encode(array(
-
-            'ShopID' => utf8_encode($shop['ShopID']),
             'ShopName' => utf8_encode($shop['ShopName']),
             'ShopAddress' => utf8_encode($shop['ShopAddress']),
             'ShopEmail' => utf8_encode($shop['ShopEmail']),
@@ -339,12 +356,50 @@ $application->get('/shop/:shop_id', function($shopId) use ($application, $databa
 
 });
 
+// Get the Price of the device
+// (get) http://localhost/devicePrice/1            1 is the mobile_id
+$application->get('/deviceprice/:mobile_id', function($mobile_id) use ($application, $databaseObject){
+
+    $prices = array();
+    $application->response()->header('Content-Type', 'application/json');
+
+    $mobilePrices = $databaseObject->PriceTable()->order("Price")->where('MobileID', $mobile_id);
+    foreach ($mobilePrices as $price)
+    {
+        $prices[] = array(
+            'PriceID' => utf8_encode($price['PriceID']),
+            'ShopID' => utf8_encode($price['ShopID']),
+            'Price' => utf8_encode($price['Price'])
+        );
+    }
+    echo json_encode(array('prices' => $prices));
+});
+
+// Get the Price of the device
+// (get) http://localhost/sortbyprice/25000           25000 is the price which is upper bound of the price
+$application->get('/sortbyprice/:price', function ($price) use($application, $databaseObject) {
+
+    $application->response()->header('Content-Type', 'application/json');
+    $sortedMobiles = array();
+    $sortedPrices = $databaseObject->PriceTable()->group('MobileID')->where("Price <= ?", $price);
+    foreach ($sortedPrices as $price)
+    {
+        $mobile = $databaseObject->MobileFeatures()->where('MobileID', $price['MobileID'])->fetch();
+        $sortedMobiles[] = array(
+            'MobileID' => utf8_encode($mobile['MobileID']),
+            'ModelName' => utf8_encode($mobile['ModelName']),
+            'Photo' => utf8_encode($mobile['Photo'])
+        );
+    }
+    echo json_encode(array('devices' => $sortedMobiles));
+});
+
 // Get all Brands information
 // (get) http://localhost/brands
 $application->get('/brands', function () use($application, $databaseObject) {
 
     $application->response()->header('Content-Type', 'application/json');
-
+    $brands = array();
     foreach ($databaseObject->Brand() as $brand)
     {
         $brands[] = array(
