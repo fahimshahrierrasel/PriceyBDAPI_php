@@ -9,16 +9,19 @@ place all this file to your htdocs to test this API.
 ### API Requests
  
 | # | Requests | Method | Information |
-| :---: | :---------- | :--------: | :--------: |
+| :---: | :---------- | :--------: | :-------- |
 | 1 | `http://localhost/` | get | API information |
 | 2 | `http://localhost/hello/your name` | get | Welcome to the API friend |
-| 3 | `http://localhost/alldevices` | get| All avilable devices details information |
+| 3 | `http://localhost/devices` | get| All avilable devices details information |
 | 4 | `http://localhost/device/mobile_id` | get | A single device details information |
 | 5 | `http://localhost/devicesshortinfo` | get | All avilable devices short information |
-| 6 | `http://localhost/sortdevices?sort_key=_____&sort_value=_____` | get | Sorted short information of devices |
-| 7 | `http://localhost/deviceprice/mobile_id` | get | Price of the device |
+| 6 | `http://localhost/directsortdevices/:sortKey/:sortValue` | get | Sorted devices which fulfuil the direct condition |
+| 7 | `http://localhost/sortdevices/:sortKey/:sortValue` | get | All available device fulfuil this condition ( sorted device will have configuration greater or equal ( >= ) to the expected condition)| 
 | 8 | `http://localhost/allshops` | get | All shops information |
 | 9 | `http://localhost/shop/shop_id` | get | A specific the shop information |
+| 10 | `http://localhost/deviceprice/mobile_id` | get | Price of the device |
+| 11 | `http://localhost/sortbyprice/:price` | get | Show all devices which price is less or equal ( <= ) of the given price |
+| 12 | `http://localhost/brands` | get | All information of the brands including their image resources |
 
  
 
@@ -39,88 +42,124 @@ A welcome screen to greeting you.
 
 ---
 
-#### `http://localhost/alldevices` (get)
-Will return all the avilable devices in the Database.
+#### `http://localhost/devices` (get)
+Will return all the avilable devices full details.
 
-**example :** `http://localhost/alldevices`
+**example :** `http://localhost/devices`
 
 **Return value:**
 
 ```json
-
-[
+{
+  "devices": [
     {
-        "MOBILE_ID": "1",
-        "BRAND": "Samsung",
-        "MODEL_NAME": "Samsung Galaxy Note 7",
-        "NETWORK": "GSM/HSPA/LTE",
-        "LAUNCH": "2016, September 2",
-        "DISPLAY_SIZE": "5.7 inches",
-        "DISPLAY_RESOLUTION": "1440 x 2560 pixels",
-        "DISPLAY_TYPE": "Super AMOLED capacitive touchscreen",
-        "SIM_TYPE": "Nano-SIM",
-        "WEIGHT": "169 gm",
-        "OS": "Android OS, v6.0.1 (Marshmallow)",
-        "CHIPSET": "Exynos 8890 Octa",
-        "CPU": "Octa-core (4x2.3 GHz Mongoose & 4x1.6 GHz Cortex-A53)",
-        "GPU": "Mali-T880 MP12",
-        "MEMORY_RAM": "4 GB",
-        "MEMORY_INTERNAL": "64 GB",
-        "MEMORY_EXTERNAL": "microSD",
-        "PRIMARY_CAMERA": "12 MP",
-        "SECONDARY_CAMERA": "5 MP",
-        "CAMERA_FEATURES": "1/2.5\" sensor size, 1.4 micro pixel size, geo-tagging, simultaneous 4K video and 9MP image recording, touch focus, face/smile detection, Auto HDR, panorama",
-        "BATTERY_TYPE": "3500 mAh",
-        "BLUETOOTH": "v4.2, A2DP, EDR, LE",
-        "WIFI": "802.11 a/b/g/n/ac",
-        "NFC": "Yes",
-        "OTG": "Yes",
-        "RADIO": "No",
-        "GPS": "Yes, A-GPS, GLONASS",
-        "USB": "v3.1, Type-C",
-        "SENSORS": "Iris scanner, fingerprint, accelerometer, gyro, proximity, compass, barometer, heart rate, SpO2",
-        "COLORS": "Blue Coral, Gold Platinum, Silver Titanium, Black Onyx",
-        "DIMENSIONS": "153.5 x 73.9 x ",
-        "PHOTO": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg",
-        "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
+      "ModelName": "Motorola Moto Z Play",
+      "NetTechnology": "GSM / CDMA / HSPA / LTE",
+      "2GBands": "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2 (dual-SIM model only)",
+      "3GBands": "HSDPA 850 / 900 / 1900 / 2100",
+      "4GBands": "LTE band 2(1900), 3(1800), 4(1700/2100), 5(850), 7(2600), 13(700) - USA",
+      "Speed": "HSPA, LTE",
+      "GPRS": "Yes",
+      "EDGE": "Yes",
+      "Announced": "2016, August",
+      "Status": "Coming soon. Exp. release 2016, September",
+      "BodyDimensions": "156.4 x 76.4 x 7 mm (6.16 x 3.01 x 0.28 in)",
+      "BodyWeight": "165 g (5.82 oz)",
+      "SimType": "Single SIM (Nano-SIM) or Dual SIM (Nano-SIM, dual stand-by)",
+      "BodyFeatures": "Water repellent nano-coating (IP52 certified)",
+      "DisplayType": "Super AMOLED capacitive touchscreen, 16M colors",
+      "DisplaySize": "5.5",
+      "DisplayResolution": "1080 x 1920",
+      "DisplayProtection": "No",
+      "DisplayFeatures": "No",
+      "Os": "Android OS, v6.0.1 (Marshmallow)",
+      "Chipset": "Qualcomm MSM8953 Snapdragon 625",
+      "CpuType": "Octa-core 2.0 GHz Cortex-A53",
+      "Gpu": "Adreno 506",
+      "MemoryRam": "3",
+      "MemoryOption": "32 GB",
+      "MemoryExpand": "microSD, up to 256 GB",
+      "PrimaryCameraFeatures": "16 MP, f/2.0, phase detection and laser autofocus, dual-LED (dual tone) flash",
+      "Video": "2160p@30fps, 1080p@30fps, 720p@120fps",
+      "SecondaryCameraFeatures": "5 MP, f/2.2, 1.4 µm pixel size, LED flash, 1080p",
+      "CameraFeatures": "1.3 µm pixel size, geo-tagging, touch focus, face detection, panorama, HDR",
+      "SoundAlertTypes": "Vibration; MP3, WAV ringtones",
+      "SoundLoudspeaker": "Yes",
+      "SoundJack": "Yes",
+      "SoundFeatures": "Active noise cancellation with dedicated mic",
+      "Wifi": "Wi-Fi 802.11 a/b/g/n, Wi-Fi Direct, hotspot",
+      "Bluetooth": "v4.0, A2DP, LE",
+      "Gps": "Yes, with A-GPS",
+      "Nfc": "Yes",
+      "Radio": "To be confirmed",
+      "Usb": "Type-C 1.0 reversible connector, magnetic connector",
+      "Sensors": "Fingerprint, accelerometer, gyro, proximity, compass",
+      "Messaging": "SMS(threaded view), MMS, Email, Push Email, IM",
+      "Browser": "HTML5",
+      "Java": "No",
+      "OtherFeatures": "MP3/AAC+/WAV/Flac player\r\nMP4/H.264 player\r\nPhoto/video editor\r\nDocument viewer",
+      "BatteryType": "Non-removable Li-Ion 3510 mAh battery",
+      "BatteryCapacity": "3510",
+      "BatteryTalktime": "No Info",
+      "BatteryMusicplay": "No Info",
+      "Colors": "Black, White",
+      "Performance": "No Info"
     },
     {
-        "MOBILE_ID": "2",
-        "BRAND": "Samsung",
-        "MODEL_NAME": "Samsung Galaxy Note 7 (USA)",
-        "NETWORK": "GSM/HSPA/LTE",
-        "LAUNCH": "2016, September 2",
-        "DISPLAY_SIZE": "5.7 inches",
-        "DISPLAY_RESOLUTION": "1440 x 2560 pixels",
-        "DISPLAY_TYPE": "Super AMOLED capacitive touchscreen",
-        "SIM_TYPE": "Nano-SIM",
-        "WEIGHT": "169 gm",
-        "OS": "Android OS, v6.0.1 (Marshmallow)",
-        "CHIPSET": "Exynos 8890 Octa",
-        "CPU": "Octa-core (4x2.3 GHz Mongoose & 4x1.6 GHz Cortex-A53)",
-        "GPU": "Mali-T880 MP12",
-        "MEMORY_RAM": "4 GB",
-        "MEMORY_INTERNAL": "64 GB",
-        "MEMORY_EXTERNAL": "microSD",
-        "PRIMARY_CAMERA": "12 MP",
-        "SECONDARY_CAMERA": "5 MP",
-        "CAMERA_FEATURES": "1/2.5\" sensor size, 1.4 micro pixel size, geo-tagging, simultaneous 4K video and 9MP image recording, touch focus, face/smile detection, Auto HDR, panorama",
-        "BATTERY_TYPE": "3500 mAh",
-        "BLUETOOTH": "v4.2, A2DP, EDR, LE",
-        "WIFI": "802.11 a/b/g/n/ac",
-        "NFC": "Yes",
-        "OTG": "Yes",
-        "RADIO": "No",
-        "GPS": "Yes, A-GPS, GLONASS",
-        "USB": "v3.1, Type-C",
-        "SENSORS": "Iris scanner, fingerprint, accelerometer, gyro, proximity, compass, barometer, heart rate, SpO2",
-        "COLORS": "Blue Coral, Gold Platinum, Silver Titanium, Black Onyx",
-        "DIMENSIONS": "153.5 x 73.9 x ",
-        "PHOTO": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg",
-        "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
+      "ModelName": "Xiaomi Redmi Note 3",
+      "NetTechnology": "GSM / HSPA / LTE",
+      "2GBands": "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2",
+      "3GBands": "HSDPA 850 / 900 / 1700(AWS) / 1900 / 2100",
+      "4GBands": "LTE band 1(2100), 2(1900), 3(1800), 4(1700/2100), 5(850), 7(2600), 8(900), 38(2600), 39(1900), 40(2300), 41(2500)",
+      "Speed": "HSPA, LTE",
+      "GPRS": "Yes",
+      "EDGE": "Yes",
+      "Announced": "2016, January",
+      "Status": "Released 2016, February",
+      "BodyDimensions": "150 x 76 x 8.7 mm (5.91 x 2.99 x 0.34 in)",
+      "BodyWeight": "164 g (5.78 oz)",
+      "SimType": "Dual SIM (Micro-SIM/Nano-SIM, dual stand-by)",
+      "BodyFeatures": "",
+      "DisplayType": "IPS LCD capacitive touchscreen, 16M colors",
+      "DisplaySize": "5.5",
+      "DisplayResolution": "1080 x 1920",
+      "DisplayProtection": "No",
+      "DisplayFeatures": "MIUI 8.0",
+      "Os": "Android OS, v5.1.1 (Lollipop)",
+      "Chipset": "Qualcomm MSM8956 Snapdragon 650",
+      "CpuType": "Hexa-core (4x1.4 GHz Cortex-A53 & 2x1.8 GHz Cortex-A72)",
+      "Gpu": "Adreno 510",
+      "MemoryRam": "2",
+      "MemoryOption": "16 GB, 2 GB RAM / 32 GB, 3 GB RAM",
+      "MemoryExpand": "microSD, up to 256 GB (uses SIM 2 slot)",
+      "PrimaryCameraFeatures": "16 MP, f/2.0, phase detection autofocus, dual-LED (dual tone) flash",
+      "Video": "1080p@30fps",
+      "SecondaryCameraFeatures": "5 MP, f/2.0, 1080p",
+      "CameraFeatures": "Geo-tagging, touch focus, face/smile detection, HDR, panorama",
+      "SoundAlertTypes": "Vibration; MP3, WAV ringtones",
+      "SoundLoudspeaker": "Yes",
+      "SoundJack": "Yes",
+      "SoundFeatures": "24-bit/192kHz audio\r\nActive noise cancellation with dedicated mic",
+      "Wifi": "Wi-Fi 802.11 a/b/g/n/ac, dual-band, WiFi Direct, hotspot",
+      "Bluetooth": "v4.1, A2DP, LE",
+      "Gps": "Yes, with A-GPS, GLONASS, BDS",
+      "Nfc": "Yes",
+      "Radio": "Stereo FM radio, recording",
+      "Usb": "microUSB v2.0, USB On-The-Go",
+      "Sensors": "Fingerprint, accelerometer, gyro, proximity, compass",
+      "Messaging": "SMS(threaded view), MMS, Email, Push Mail, IM",
+      "Browser": "HTML5",
+      "Java": "No",
+      "OtherFeatures": "Fast battery charging\r\nXviD/MP4/H.265 player\r\nMP3/WAV/eAAC+/Flac player\r\nPhoto/video editor\r\nDocument viewer",
+      "BatteryType": "Non-removable Li-Po 4000 mAh battery",
+      "BatteryCapacity": "4000",
+      "BatteryTalktime": "No Inforamtion",
+      "BatteryMusicplay": "No Inforamtion",
+      "Colors": "Silver, Gray, Gold",
+      "Performance": "No Inforamtion"
     }
-]
-
+  ]
+}
 ```
 
 ---
@@ -135,41 +174,58 @@ Will return a device if it is avilable in the Database.
 
 ```json
 {
-    "MOBILE_ID": "2",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy Note 7 (USA)",
-    "NETWORK": "GSM/HSPA/LTE",
-    "LAUNCH": "2016, September 2",
-    "DISPLAY_SIZE": "5.7 inches",
-    "DISPLAY_RESOLUTION": "1440 x 2560 pixels",
-    "DISPLAY_TYPE": "Super AMOLED capacitive touchscreen",
-    "SIM_TYPE": "Nano-SIM",
-    "WEIGHT": "169 gm",
-    "OS": "Android OS, v6.0.1 (Marshmallow)",
-    "CHIPSET": "Exynos 8890 Octa",
-    "CPU": "Octa-core (4x2.3 GHz Mongoose & 4x1.6 GHz Cortex-A53)",
-    "GPU": "Mali-T880 MP12",
-    "MEMORY_RAM": "4 GB",
-    "MEMORY_INTERNAL": "64 GB",
-    "MEMORY_EXTERNAL": "microSD",
-    "PRIMARY_CAMERA": "12 MP",
-    "SECONDARY_CAMERA": "5 MP",
-    "CAMERA_FEATURES": "1/2.5\" sensor size, 1.4 micro pixel size, geo-tagging, simultaneous 4K video and 9MP image recording, touch focus, face/smile detection, Auto HDR, panorama",
-    "BATTERY_TYPE": "3500 mAh",
-    "BLUETOOTH": "v4.2, A2DP, EDR, LE",
-    "WIFI": "802.11 a/b/g/n/ac",
-    "NFC": "Yes",
-    "OTG": "Yes",
-    "RADIO": "No",
-    "GPS": "Yes, A-GPS, GLONASS",
-    "USB": "v3.1, Type-C",
-    "SENSORS": "Iris scanner, fingerprint, accelerometer, gyro, proximity, compass, barometer, heart rate, SpO2",
-    "COLORS": "Blue Coral, Gold Platinum, Silver Titanium, Black Onyx",
-    "DIMENSIONS": "153.5 x 73.9 x ",
-    "PHOTO": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
+  "ModelName": "Motorola Moto Z Play",
+  "NetTechnology": "GSM / CDMA / HSPA / LTE",
+  "2GBands": "GSM 850 / 900 / 1800 / 1900 - SIM 1 & SIM 2 (dual-SIM model only)",
+  "3GBands": "HSDPA 850 / 900 / 1900 / 2100",
+  "4GBands": "LTE band 2(1900), 3(1800), 4(1700/2100), 5(850), 7(2600), 13(700) - USA",
+  "Speed": "HSPA, LTE",
+  "GPRS": "Yes",
+  "EDGE": "Yes",
+  "Announced": "2016, August",
+  "Status": "Coming soon. Exp. release 2016, September",
+  "BodyDimensions": "156.4 x 76.4 x 7 mm (6.16 x 3.01 x 0.28 in)",
+  "BodyWeight": "165 g (5.82 oz)",
+  "SimType": "Single SIM (Nano-SIM) or Dual SIM (Nano-SIM, dual stand-by)",
+  "BodyFeatures": "Water repellent nano-coating (IP52 certified)",
+  "DisplayType": "Super AMOLED capacitive touchscreen, 16M colors",
+  "DisplaySize": "5.5",
+  "DisplayResolution": "1080 x 1920",
+  "DisplayProtection": "No",
+  "DisplayFeatures": "No",
+  "Os": "Android OS, v6.0.1 (Marshmallow)",
+  "Chipset": "Qualcomm MSM8953 Snapdragon 625",
+  "CpuType": "Octa-core 2.0 GHz Cortex-A53",
+  "Gpu": "Adreno 506",
+  "MemoryRam": "3",
+  "MemoryOption": "32 GB",
+  "MemoryExpand": "microSD, up to 256 GB",
+  "PrimaryCameraFeatures": "16 MP, f/2.0, phase detection and laser autofocus, dual-LED (dual tone) flash",
+  "Video": "2160p@30fps, 1080p@30fps, 720p@120fps",
+  "SecondaryCameraFeatures": "5 MP, f/2.2, 1.4 µm pixel size, LED flash, 1080p",
+  "CameraFeatures": "1.3 µm pixel size, geo-tagging, touch focus, face detection, panorama, HDR",
+  "SoundAlertTypes": "Vibration; MP3, WAV ringtones",
+  "SoundLoudspeaker": "Yes",
+  "SoundJack": "Yes",
+  "SoundFeatures": "Active noise cancellation with dedicated mic",
+  "Wifi": "Wi-Fi 802.11 a/b/g/n, Wi-Fi Direct, hotspot",
+  "Bluetooth": "v4.0, A2DP, LE",
+  "Gps": "Yes, with A-GPS",
+  "Nfc": "Yes",
+  "Radio": "To be confirmed",
+  "Usb": "Type-C 1.0 reversible connector, magnetic connector",
+  "Sensors": "Fingerprint, accelerometer, gyro, proximity, compass",
+  "Messaging": "SMS(threaded view), MMS, Email, Push Email, IM",
+  "Browser": "HTML5",
+  "Java": "No",
+  "OtherFeatures": "MP3/AAC+/WAV/Flac player\r\nMP4/H.264 player\r\nPhoto/video editor\r\nDocument viewer",
+  "BatteryType": "Non-removable Li-Ion 3510 mAh battery",
+  "BatteryCapacity": "3510",
+  "BatteryTalktime": "No Info",
+  "BatteryMusicplay": "No Info",
+  "Colors": "Black, White",
+  "Performance": "No Info"
 }
-
 ```
 
 ---
@@ -181,134 +237,81 @@ Will return short information of all devices
 
 **Return value:**
 
-```
-[
-  {
-    "MOBILE_ID": "1",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy Note 7",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
-  },
-  {
-    "MOBILE_ID": "2",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy Note 7 (USA)",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
-  },
-  {
-    "MOBILE_ID": "3",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy J7 ",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-2016-1.jpg"
-  },
-  {
-    "MOBILE_ID": "4",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy On7 Pro",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-on7-1.jpg"
-  },
-  {
-    "MOBILE_ID": "5",
-    "BRAND": "Apple",
-    "MODEL_NAME": "Apple iPhone SE",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/apple/apple-iphone-se-01.jpg"
-  },
-  {
-    "MOBILE_ID": "6",
-    "BRAND": "Apple",
-    "MODEL_NAME": "Apple iPhone 6s Plus",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/apple/apple-iphone6s-plus-1.jpg"
-  }
-]
+```json
+{
+  "devices": [
+    {
+      "MobileID": "1",
+      "ModelName": "Motorola Moto Z Play",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/motorola/motorola-moto-z-play-1.jpg"
+    },
+    {
+      "MobileID": "2",
+      "ModelName": "Xiaomi Redmi Note 3",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-redmi-note-3-1.jpg"
+    },
+    {
+      "MobileID": "3",
+      "ModelName": "Samsung Galaxy J7 Prime",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-prime-1.jpg"
+    }
+  ]
+}
 
 ```
 
 ---
 
-#### `http://localhost/sortdevices?sort_key=_____&sort_value=_____` (get)
+#### `http://localhost/directsortdevices/:sortKey/:sortValue` (get)
 Will return sorted devices avilable in the Database.
 
-**example :** `http://localhost/sortdevices?sort_key=BRAND&sort_value=Samsung`
+**example :** `http://localhost/directsortdevices/Brand/Samsung`
 
 **Return value:**
 
 ```json
-[
-  {
-    "MOBILE_ID": "1",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy Note 7",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
-  },
-  {
-    "MOBILE_ID": "2",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy Note 7 (USA)",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/bigpic/samsung-galaxy-note7.jpg"
-  },
-  {
-    "MOBILE_ID": "3",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy J7 ",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-2016-1.jpg"
-  },
-  {
-    "MOBILE_ID": "4",
-    "BRAND": "Samsung",
-    "MODEL_NAME": "Samsung Galaxy On7 Pro",
-    "THUMBNAIL": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-on7-1.jpg"
-  }
-]
+{
+  "devices": [
+    {
+      "MobileID": "3",
+      "ModelName": "Samsung Galaxy J7 Prime",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-prime-1.jpg"
+    }
+  ]
+}
 
 ```
 
 ---
 
-#### `http://localhost/deviceprice/mobile_id` (get)
-Will return prices of a specific device
 
-**example :** `http://localhost/deviceprice/1`
+#### `http://localhost/sortdevices/:sortKey/:sortValue` (get)
+Will return sorted devices which fulfil the condition of the sort value and the sorted devices value will be >= than the sortValue.
+
+**example :** `http://localhost/sortdevices/MemoryRam/2.5
 
 **Return value:**
 
 ```json
-
-[
-  {
-    "PRICE_ID": "4",
-    "MOBILE_ID": "1",
-    "SHOP_ID": "2",
-    "PRICE": "65200"
-  },
-  {
-    "PRICE_ID": "5",
-    "MOBILE_ID": "1",
-    "SHOP_ID": "3",
-    "PRICE": "65000"
-  },
-  {
-    "PRICE_ID": "6",
-    "MOBILE_ID": "1",
-    "SHOP_ID": "1",
-    "PRICE": "65250"
-  },
-  {
-    "PRICE_ID": "7",
-    "MOBILE_ID": "1",
-    "SHOP_ID": "4",
-    "PRICE": "65600"
-  },
-  {
-    "PRICE_ID": "8",
-    "MOBILE_ID": "1",
-    "SHOP_ID": "5",
-    "PRICE": "65300"
-  }
-]
+{
+  "devices": [
+    {
+      "MobileID": "1",
+      "ModelName": "Motorola Moto Z Play",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/motorola/motorola-moto-z-play-1.jpg"
+    },
+    {
+      "MobileID": "3",
+      "ModelName": "Samsung Galaxy J7 Prime",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-prime-1.jpg"
+    }
+  ]
+}
 
 ```
 
 ---
+
 
 #### `http://localhost/allshops` (get)
 Will return information about all shops
@@ -317,54 +320,28 @@ Will return information about all shops
 **Return value:**
 
 ```json
-
-[
+{
+  "shops": [
     {
-        "SHOP_ID": "1",
-        "SHOP_NAME": "Fahim and Sons store",
-        "SHOP_ADDRESS": "Jamuna Future Park Dhaka",
-        "SHOP_EMAIL": "fahim@gmail.com",
-        "SHOP_MOBILE_NUMBER": "01711111111",
-        "LATITUDE": "23.812983",
-        "LONGITUDE": "90.422188"
+      "ShopID": "1",
+      "ShopName": "Fahim & Brothers Electronics",
+      "ShopAddress": "Ta-214, Middle Badda, Dhaka-1212",
+      "ShopEmail": "fahimshahrier2@gmail.com",
+      "ShopMobileNumber": "01554070646",
+      "Latitude": "23.780082",
+      "Longitude": "90.425435"
     },
     {
-        "SHOP_ID": "2",
-        "SHOP_NAME": "Kamrul Mobile store",
-        "SHOP_ADDRESS": "10 Mirpur Dhaka",
-        "SHOP_EMAIL": "kamrul@gmail.com",
-        "SHOP_MOBILE_NUMBER": "01711111112",
-        "LATITUDE": "23.791355",
-        "LONGITUDE": "90.348439"
-    },
-    {
-        "SHOP_ID": "3",
-        "SHOP_NAME": "Almas and Brothers Mobile store",
-        "SHOP_ADDRESS": "3a Dhanmondi Dhaka",
-        "SHOP_EMAIL": "Almas@gmail.com",
-        "SHOP_MOBILE_NUMBER": "01711111113",
-        "LATITUDE": "23.739629",
-        "LONGITUDE": "90.373559"
-    },
-    {
-        "SHOP_ID": "4",
-        "SHOP_NAME": "Birat Saha Mobile store",
-        "SHOP_ADDRESS": "5b Uttara Dhaka",
-        "SHOP_EMAIL": "Birat@gmail.com",
-        "SHOP_MOBILE_NUMBER": "01711111114",
-        "LATITUDE": "23.890472",
-        "LONGITUDE": "90.375955"
-    },
-    {
-        "SHOP_ID": "5",
-        "SHOP_NAME": "Rasel Mobile and Gadget store",
-        "SHOP_ADDRESS": "Bashundhora Dhaka 1200",
-        "SHOP_EMAIL": "Rasel@gmail.com",
-        "SHOP_MOBILE_NUMBER": "01711111115",
-        "LATITUDE": "23.7652948",
-        "LONGITUDE": "90.3888278"
+      "ShopID": "2",
+      "ShopName": "Rifat & Brothers Mobiles",
+      "ShopAddress": "Gulshan DCC Market, Gulshan, Dhaka-1212",
+      "ShopEmail": "rabiulawal@gmail.com",
+      "ShopMobileNumber": "01521216288",
+      "Latitude": "23.779468",
+      "Longitude": "90.415699"
     }
-]
+  ]
+}
 
 ```
 
@@ -378,17 +355,118 @@ Will return a specific shop information
 **Return value:**
 
 ```json
-
 {
-  "SHOP_ID": "5",
-  "SHOP_NAME": "Rasel Mobile and Gadget store",
-  "SHOP_ADDRESS": "Bashundhora Dhaka 1200",
-  "SHOP_EMAIL": "Rasel@gmail.com",
-  "SHOP_MOBILE_NUMBER": "01711111115",
-  "LATITUDE": "23.7652948",
-  "LONGITUDE": "90.3888278"
+      "ShopID": "2",
+      "ShopName": "Rifat & Brothers Mobiles",
+      "ShopAddress": "Gulshan DCC Market, Gulshan, Dhaka-1212",
+      "ShopEmail": "rabiulawal@gmail.com",
+      "ShopMobileNumber": "01521216288",
+      "Latitude": "23.779468",
+      "Longitude": "90.415699"
 }
 
 ```
 
 ---
+
+
+#### `http://localhost/deviceprice/:mobile_id` (get)
+Will return prices of a specific device
+
+**example :** `http://localhost/deviceprice/1`
+
+**Return value:**
+
+```json
+{
+  "prices": [
+    {
+      "PriceID": "5",
+      "ShopID": "1",
+      "Price": "25300"
+    },
+    {
+      "PriceID": "6",
+      "ShopID": "2",
+      "Price": "25400"
+    }
+  ]
+}
+
+```
+
+---
+
+#### `http://localhost/sortbyprice/:price` (get)
+Will return all avilable devices which price is less or equal than the expected price
+
+**example :** `http://localhost/sortbyprice/35000`
+
+**Return value:**
+
+```json
+{
+  "devices": [
+    {
+      "MobileID": "2",
+      "ModelName": "Xiaomi Redmi Note 3",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-redmi-note-3-1.jpg"
+    },
+    {
+      "MobileID": "3",
+      "ModelName": "Samsung Galaxy J7 Prime",
+      "Photo": "http://cdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-j7-prime-1.jpg"
+    }
+  ]
+}
+```
+
+---
+
+#### `http://localhost/brands` (get)
+Will return all brands name and their logo url
+
+**example :** `http://localhost/brands`
+
+**Return value:**
+
+```json
+{
+  "brands": [
+    {
+      "BrandID": "1",
+      "BrandName": "Samsung",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/samsung.png"
+    },
+    {
+      "BrandID": "2",
+      "BrandName": "Apple",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/apple.png"
+    },
+    {
+      "BrandID": "3",
+      "BrandName": "Asus",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/asus.png"
+    },
+    {
+      "BrandID": "4",
+      "BrandName": "BlackBerry",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/blackBerry.png"
+    },
+    {
+      "BrandID": "5",
+      "BrandName": "Sony",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/sony.png"
+    },
+    {
+      "BrandID": "7",
+      "BrandName": "HTC",
+      "BrandImage": "http://api.treebricks.com/api_res/brand_imgs/htc.png"
+    }
+  ]
+}
+```
+
+---
+
+
