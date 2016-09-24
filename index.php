@@ -9,6 +9,7 @@ require 'vendor/autoload.php';
 require 'plugins/NotORM.php';
 ini_set('memory_limit', '-1');
 set_time_limit(0);
+header("Access-Control-Allow-Origin: *");
 
 \Slim\Slim::registerAutoloader();
 
@@ -216,6 +217,79 @@ $application->get('/device/:mobile_id', function($mobile_id) use ($application, 
     }
 });
 
+
+// Single device details information by model name
+// (get) http://localhost/device/Device Model
+$application->get('/devicebyname/:deviceModel', function($device_model) use ($application, $databaseObject){
+
+    $application->response()->header('Content-Type', 'application/json');
+    $tempMobile = $databaseObject->MobileFeatures()->where("ModelName", $device_model);
+    if ($mobile = $tempMobile->fetch())
+    {
+        echo json_encode(array(
+            'ModelName' => utf8_encode($mobile['ModelName']),
+            'NetTechnology' => utf8_encode($mobile['NetTechnology']),
+            '2GBands' => utf8_encode($mobile['2GBands']),
+            '3GBands' => utf8_encode($mobile['3GBands']),
+            '4GBands' => utf8_encode($mobile['4GBands']),
+            'Speed' => utf8_encode($mobile['Speed']),
+            'GPRS' => utf8_encode($mobile['GPRS']),
+            'EDGE' => utf8_encode($mobile['EDGE']),
+            'Announced' => utf8_encode($mobile['Announced']),
+            'Status' => utf8_encode($mobile['Status']),
+            'BodyDimensions' => utf8_encode($mobile['BodyDimensions']),
+            'BodyWeight' => utf8_encode($mobile['BodyWeight']),
+            'SimType' => utf8_encode($mobile['SimType']),
+            'BodyFeatures' => utf8_encode($mobile['BodyFeatures']),
+            'DisplayType' => utf8_encode($mobile['DisplayType']),
+            'DisplaySize' => utf8_encode($mobile['DisplaySize']),
+            'DisplayResolution' => utf8_encode($mobile['DisplayResolution']),
+            'DisplayProtection' => utf8_encode($mobile['DisplayProtection']),
+            'DisplayFeatures' => utf8_encode($mobile['DisplayFeatures']),
+            'Os' => utf8_encode($mobile['Os']),
+            'Chipset' => utf8_encode($mobile['Chipset']),
+            'CpuType' => utf8_encode($mobile['CpuType']),
+            'Gpu' => utf8_encode($mobile['Gpu']),
+            'MemoryRam' => utf8_encode($mobile['MemoryRam']),
+            'MemoryOption' => utf8_encode($mobile['MemoryOption']),
+            'MemoryExpand' => utf8_encode($mobile['MemoryExpand']),
+            'PrimaryCameraFeatures' => utf8_encode($mobile['PrimaryCameraFeatures']),
+            'Video' => utf8_encode($mobile['Video']),
+            'SecondaryCameraFeatures' => utf8_encode($mobile['SecondaryCameraFeatures']),
+            'CameraFeatures' => utf8_encode($mobile['CameraFeatures']),
+            'SoundAlertTypes' => utf8_encode($mobile['SoundAlertTypes']),
+            'SoundLoudspeaker' => utf8_encode($mobile['SoundLoudspeaker']),
+            'SoundJack' => utf8_encode($mobile['SoundJack']),
+            'SoundFeatures' => utf8_encode($mobile['SoundFeatures']),
+            'Wifi' => utf8_encode($mobile['Wifi']),
+            'Bluetooth' => utf8_encode($mobile['Bluetooth']),
+            'Gps' => utf8_encode($mobile['Gps']),
+            'Nfc' => utf8_encode($mobile['Nfc']),
+            'Radio' => utf8_encode($mobile['Radio']),
+            'Usb' => utf8_encode($mobile['Usb']),
+            'Sensors' => utf8_encode($mobile['Sensors']),
+            'Messaging' => utf8_encode($mobile['Messaging']),
+            'Browser' => utf8_encode($mobile['Browser']),
+            'Java' => utf8_encode($mobile['Java']),
+            'OtherFeatures' => utf8_encode($mobile['OtherFeatures']),
+            'BatteryType' => utf8_encode($mobile['BatteryType']),
+            'BatteryCapacity' => utf8_encode($mobile['BatteryCapacity']),
+            'BatteryTalktime' => utf8_encode($mobile['BatteryTalktime']),
+            'BatteryMusicplay' => utf8_encode($mobile['BatteryMusicplay']),
+            'Colors' => utf8_encode($mobile['Colors']),
+            'Performance' => utf8_encode($mobile['Performance'])
+        ), JSON_FORCE_OBJECT);
+    }
+    else
+    {
+        echo json_encode(array(
+            'status' => false,
+            'message' => "MobileID $device_model does not exist!"
+        ));
+    }
+});
+
+
 // All devices short information
 // (get) http://localhost/devicesshortinfo
 $application->get('/devicesshortinfo', function() use ($application, $databaseObject){
@@ -411,6 +485,20 @@ $application->get('/brands', function () use($application, $databaseObject) {
     echo json_encode(array('brands' => $brands));
 
 });
+
+// Get all Devices name
+// (get) http://localhost/alldevicesname
+$application->get('/alldevicesname', function () use($application, $databaseObject) {
+
+    $application->response()->header('Content-Type', 'application/json');
+    $mobiles = array();
+    foreach ($databaseObject->MobileFeatures() as $mobile)
+    {
+        $mobiles[] = utf8_encode($mobile['ModelName']);
+    }
+    echo json_encode(array('models' => $mobiles));
+});
+
 
 
 $application->run();
