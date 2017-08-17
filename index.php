@@ -328,6 +328,23 @@ $application->get('/directsortdevices/:sortKey/:sortValue', function($sortKey, $
     echo json_encode(array('devices'=>$mobiles));
 });
 
+
+// Get the hort information of the device by its Model Name
+// (get) http://localhost/directsortdevices/Samsung Galaxy S7
+$application->get('/shortinfo/:modelName', function($model_name) use ($application, $databaseObject){
+
+    $application->response()->header('Content-Type', 'application/json');
+    $sortedMobiles = $databaseObject->MobileFeatures()->where("ModelName", $model_name);
+    if($mobile = $sortedMobiles->fetch())
+    {
+        echo json_encode(array(
+            'MobileID' => utf8_encode($mobile['MobileID']),
+            'ModelName' => utf8_encode($mobile['ModelName']),
+            'Photo' => utf8_encode($mobile['Photo'])
+        ), JSON_FORCE_OBJECT);
+    }
+});
+
 // Get the sorted short information of the devices
 // (get) http://localhost/sortdevices/MemoryRam/1.5
 $application->get('/sortdevices/:sortKey/:sortValue', function($sortKey, $sortValue) use ($application, $databaseObject){
